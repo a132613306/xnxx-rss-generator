@@ -1,0 +1,29 @@
+name: RSS Generator
+on:
+  schedule:
+    - cron: '0 */1 * * *'  # 每1小时运行一次
+  workflow_dispatch:       # 支持手动触发
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+          
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+        
+      - name: Run RSS generator
+        run: python scripts/generate_rss.py
+        
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: rss-feed
+          path: feed.xml
